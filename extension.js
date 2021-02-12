@@ -24,7 +24,18 @@ function activate(context) {
 			}
 			
 			const namespace = namespaceFinder(json, clickedFolder)
-			console.log(namespace)
+
+			vscode.window.showInputBox({
+				prompt: 'Class Name'
+			}).then(className => {
+				vscode.window.showInputBox({
+					prompt: 'Namespace',
+					value: namespace !== null ? namespace : ''
+				}).then(classNamespace => {
+					console.log(className)
+					console.log(classNamespace)
+				})
+			})
 
 		}).catch(err => vscode.window.showErrorMessage('Could not open composer.json : ' + err))
 
