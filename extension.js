@@ -22,23 +22,26 @@ function activate(context) {
         
         const composerJsonPath = findComposerJsonFilePath(rootFolder)
 
-        let text = null
-        try {
-            text = await readStringFromFilePath(composerJsonPath)
-        } catch (err) {
-            vscode.window.showErrorMessage('Could not open composer.json : ' + err)
-        }
-
         let namespace = null
 
-        if (text !== null) {
-            const json = JSON.parse(text)
-            if (json === null) {
-                vscode.window.showErrorMessage('Syntax error in your ' + composerJsonPath)
-            } else {
-                namespace = findNamespace(json, clickedFolder)
-            }
-        }
+		if (composerJsonPath !== null) {
+			
+			let text = null
+			try {
+				text = await readStringFromFilePath(composerJsonPath)
+			} catch (err) {
+				vscode.window.showErrorMessage('Could not open composer.json : ' + err)
+			}
+
+			if (text !== null) {
+				const json = JSON.parse(text)
+				if (json === null) {
+					vscode.window.showErrorMessage('Syntax error in your ' + composerJsonPath)
+				} else {
+					namespace = findNamespace(json, clickedFolder)
+				}
+			}
+		}
         
         const classTypeDisplayName = await pickClassType()
 
