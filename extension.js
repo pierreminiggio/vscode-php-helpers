@@ -6,7 +6,8 @@ const findNamespace = require('./src/VSCProject/findNamespace.js')
 const pickClassName = require('./src/UserInput/pickClassName.js')
 const pickNamespace = require('./src/UserInput/pickNamespace.js')
 const pickClassType = require('./src/UserInput/pickClassType.js')
-const readFile = require('./src/VSCProject/readFile.js')
+const readVSDocumentFromFilePath = require('./src/VSCProject/readVSDocumentFromFilePath.js')
+const readStringFromFilePath = require('./src/VSCProject/readStringFromFilePath.js')
 const vscode = require('vscode')
 
 /**
@@ -23,7 +24,7 @@ function activate(context) {
 
         let text = null
         try {
-            text = await readFile(composerJsonPath)
+            text = await readStringFromFilePath(composerJsonPath)
         } catch (err) {
             vscode.window.showErrorMessage('Could not open composer.json : ' + err)
         }
@@ -56,6 +57,8 @@ function activate(context) {
 
 		const classFilePath = getNewClassFilePath(rootFolder, clickedFolder, className)
 		createClassFile(classFilePath, namespace ? namespace : null, classType, className)
+
+		vscode.window.showTextDocument(await readVSDocumentFromFilePath(classFilePath))
     })
 
     context.subscriptions.push(disposable);
