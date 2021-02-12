@@ -1,4 +1,6 @@
+const createClassFile = require('./src/VSCProject/createClassFile.js')
 const findComposerJsonFilePath = require('./src/VSCProject/findComposerJsonFilePath.js')
+const getNewClassFilePath = require('./src/VSCProject/getNewClassFilePath.js')
 const findLastFolder = require('./src/VSCProject/findLastFolder.js')
 const findNamespace = require('./src/VSCProject/findNamespace.js')
 const pickClassName = require('./src/UserInput/pickClassName.js')
@@ -52,9 +54,8 @@ function activate(context) {
 		namespace = await pickNamespace(namespace)
         const classType = classTypeDisplayName.toLowerCase()
 
-		console.log(classType)
-		console.log(className)
-		console.log(namespace)
+		const classFilePath = getNewClassFilePath(rootFolder, clickedFolder, className)
+		createClassFile(classFilePath, namespace ? namespace : null, classType, className)
     })
 
     context.subscriptions.push(disposable);
