@@ -7,7 +7,7 @@ const path = require('path')
  * 
  * @returns {?string}
  */
-module.exports = function (rootFolder) {
+module.exports = rootFolder => {
     
     const possibleComposerJsonFilePaths = [
         path.normalize(rootFolder.substr(1) + '/composer.json')

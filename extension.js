@@ -1,53 +1,68 @@
+const findComposerJsonFilePath = require('./src/VSCProject/findComposerJsonFilePath.js')
+const findLastFolder = require('./src/VSCProject/findLastFolder.js')
+const findNamespace = require('./src/VSCProject/findNamespace.js')
+const pickClassName = require('./src/UserInput/pickClassName.js')
+const pickNamespace = require('./src/UserInput/pickNamespace.js')
+const pickClassType = require('./src/UserInput/pickClassType.js')
+const readFile = require('./src/VSCProject/readFile.js')
 const vscode = require('vscode')
-const composerJsonFilePathFinder = require('./src/composerJsonFilePathFinder.js')
-const lastFolderFinder = require('./src/lastFolderFinder.js')
-const namespaceFinder = require('./src/namespaceFinder.js')
 
 /**
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-	
-	let disposable = vscode.commands.registerCommand('phphelpers.createClass', (host) => {
+    
+    const disposable = vscode.commands.registerCommand('phphelpers.createClass', async host => {
 
+        const rootFolder = vscode.workspace.workspaceFolders[0].uri.path
+        const clickedFolder = findLastFolder(rootFolder, host.path)
+        
+        const composerJsonPath = findComposerJsonFilePath(rootFolder)
 
-		const rootFolder = vscode.workspace.workspaceFolders[0].uri.path
-		const clickedFolder = lastFolderFinder(rootFolder, host.path)
-		
-		const composerJsonPath = composerJsonFilePathFinder(rootFolder)
-		vscode.workspace.openTextDocument(composerJsonPath).then((document) => {
-			const text = document.getText();
-			const json = JSON.parse(text)
-			if (json === null) {
-				vscode.window.showErrorMessage('Syntax error in your ' + composerJsonPath)
-				return
-			}
-			
-			const namespace = namespaceFinder(json, clickedFolder)
+        let text = null
+        try {
+            text = await readFile(composerJsonPath)
+        } catch (err) {
+            vscode.window.showErrorMessage('Could not open composer.json : ' + err)
+        }
 
-			vscode.window.showInputBox({
-				prompt: 'Class Name'
-			}).then(className => {
-				vscode.window.showInputBox({
-					prompt: 'Namespace',
-					value: namespace !== null ? namespace : ''
-				}).then(classNamespace => {
-					console.log(className)
-					console.log(classNamespace)
-				})
-			})
+        let namespace = null
 
-		}).catch(err => vscode.window.showErrorMessage('Could not open composer.json : ' + err))
+        if (text !== null) {
+            const json = JSON.parse(text)
+            if (json === null) {
+                vscode.window.showErrorMessage('Syntax error in your ' + composerJsonPath)
+            } else {
+                namespace = findNamespace(json, clickedFolder)
+            }
+        }
+        
+        const classTypeDisplayName = await pickClassType()
 
-		
-	});
+        if (classTypeDisplayName === undefined) {
+            return
+        }
 
-	context.subscriptions.push(disposable);
+		const className = await pickClassName(classTypeDisplayName)
+
+		if (className === undefined) {
+			return
+		}
+
+		namespace = await pickNamespace(namespace)
+        const classType = classTypeDisplayName.toLowerCase()
+
+		console.log(classType)
+		console.log(className)
+		console.log(namespace)
+    })
+
+    context.subscriptions.push(disposable);
 }
 
 function deactivate() {}
 
 module.exports = {
-	activate,
-	deactivate
+    activate,
+    deactivate
 }

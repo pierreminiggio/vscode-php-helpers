@@ -4,7 +4,7 @@
  * 
  * @return {string}
  */
-module.exports = function (rootFolder, clickedPath) {
+module.exports = (rootFolder, clickedPath) => {
     
     if (rootFolder === clickedPath) {
         return '/'
