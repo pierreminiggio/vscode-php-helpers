@@ -1,25 +1,23 @@
 const fs = require('fs')
 const path = require('path')
 
-
 /**
- * @param {string} rootFolder 
- * 
+ * @param {string} rootFolder
+ *
  * @returns {?string}
  */
 module.exports = rootFolder => {
-    
-    const possibleComposerJsonFilePaths = [
-        path.normalize(rootFolder.substr(1) + '/composer.json')
-    ]
+  const possibleComposerJsonFilePaths = [
+    path.normalize(rootFolder.substr(1) + '/composer.json')
+  ]
 
-    let composerJsonFilePath = null
+  let composerJsonFilePath = null
 
-    possibleComposerJsonFilePaths.forEach(possibleComposerJsonFilePath => {
-        if (fs.existsSync(possibleComposerJsonFilePath)) {
-            composerJsonFilePath = possibleComposerJsonFilePath
-        }
-    })
+  possibleComposerJsonFilePaths.forEach(possibleComposerJsonFilePath => {
+    if (fs.existsSync(possibleComposerJsonFilePath)) {
+      composerJsonFilePath = possibleComposerJsonFilePath
+    }
+  })
 
-    return composerJsonFilePath
+  return composerJsonFilePath
 }

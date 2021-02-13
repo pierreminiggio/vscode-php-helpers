@@ -16,16 +16,18 @@
   "contributes": {
     "commands": [
       {
-          "command": "phphelpers.createClass",
-          "title": "New PHP Class"
+        "command": "phphelpers.createClass",
+        "title": "New PHP Class"
       }
     ],
-      "menus": {
-        "explorer/context": [{
-            "when": "true",
-            "command": "phphelpers.createClass",
-            "group": "navigation"
-      }]
+    "menus": {
+      "explorer/context": [
+        {
+          "when": "true",
+          "command": "phphelpers.createClass",
+          "group": "navigation"
+        }
+      ]
     }
   },
   "scripts": {
@@ -38,7 +40,11 @@
     "@types/mocha": "^8.0.4",
     "@types/node": "^12.11.7",
     "@types/vscode": "^1.53.0",
-    "eslint": "^7.19.0",
+    "eslint": "^7.20.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.3.1",
     "glob": "^7.1.6",
     "mocha": "^8.2.1",
     "typescript": "^4.1.3",

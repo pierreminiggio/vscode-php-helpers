@@ -14,74 +14,71 @@ const vscode = require('vscode')
 /**
  * @param {vscode.ExtensionContext} context
  */
-function activate(context) {
-    
-    const disposable = vscode.commands.registerCommand('phphelpers.createClass', async host => {
+function activate (context) {
+  const disposable = vscode.commands.registerCommand('phphelpers.createClass', async host => {
+    const rootFolder = vscode.workspace.workspaceFolders[0].uri.path
+    const clickedFolder = findLastFolder(rootFolder, host.path)
 
-        const rootFolder = vscode.workspace.workspaceFolders[0].uri.path
-        const clickedFolder = findLastFolder(rootFolder, host.path)
-        
-        const composerJsonPath = findComposerJsonFilePath(rootFolder)
+    const composerJsonPath = findComposerJsonFilePath(rootFolder)
 
-        let namespace = null
+    let namespace = null
 
-        // Find namespace from composer.json
-        if (composerJsonPath !== null) {
+    // Find namespace from composer.json
+    if (composerJsonPath !== null) {
+      let text = null
+      try {
+        text = await readStringFromFilePath(composerJsonPath)
+      } catch (err) {
+        vscode.window.showErrorMessage('Could not open composer.json : ' + err)
+      }
 
-            let text = null
-            try {
-                text = await readStringFromFilePath(composerJsonPath)
-            } catch (err) {
-                vscode.window.showErrorMessage('Could not open composer.json : ' + err)
-            }
-
-            if (text !== null) {
-                const json = JSON.parse(text)
-                if (json === null) {
-                    vscode.window.showErrorMessage('Syntax error in your ' + composerJsonPath)
-                } else {
-                    namespace = findNamespaceFromComposerJson(json, clickedFolder)
-                }
-            }
+      if (text !== null) {
+        const json = JSON.parse(text)
+        if (json === null) {
+          vscode.window.showErrorMessage('Syntax error in your ' + composerJsonPath)
+        } else {
+          namespace = findNamespaceFromComposerJson(json, clickedFolder)
         }
+      }
+    }
 
-        // Fallback to nearby classes name
-        if (namespace === null) {
-            namespace = await findNamespaceFromNearbyClasses(rootFolder, clickedFolder)
-        }
-        
-        const classTypeDisplayName = await pickClassType()
+    // Fallback to nearby classes name
+    if (namespace === null) {
+      namespace = await findNamespaceFromNearbyClasses(rootFolder, clickedFolder)
+    }
 
-        if (classTypeDisplayName === undefined) {
-            return
-        }
+    const classTypeDisplayName = await pickClassType()
 
-        const className = await pickClassName(classTypeDisplayName)
+    if (classTypeDisplayName === undefined) {
+      return
+    }
 
-        if (className === undefined) {
-            return
-        }
+    const className = await pickClassName(classTypeDisplayName)
 
-        namespace = await pickNamespace(namespace)
+    if (className === undefined) {
+      return
+    }
 
-        if (namespace === undefined) {
-            return
-        }
+    namespace = await pickNamespace(namespace)
 
-        const classType = classTypeDisplayName.toLowerCase()
+    if (namespace === undefined) {
+      return
+    }
 
-        const classFilePath = getNewClassFilePath(rootFolder, clickedFolder, className)
-        createClassFile(classFilePath, namespace ? namespace : null, classType, className)
+    const classType = classTypeDisplayName.toLowerCase()
 
-        vscode.window.showTextDocument(await readVSDocumentFromFilePath(classFilePath))
-    })
+    const classFilePath = getNewClassFilePath(rootFolder, clickedFolder, className)
+    createClassFile(classFilePath, namespace || null, classType, className)
 
-    context.subscriptions.push(disposable);
+    vscode.window.showTextDocument(await readVSDocumentFromFilePath(classFilePath))
+  })
+
+  context.subscriptions.push(disposable)
 }
 
-function deactivate() {}
+function deactivate () {}
 
 module.exports = {
-    activate,
-    deactivate
+  activate,
+  deactivate
 }

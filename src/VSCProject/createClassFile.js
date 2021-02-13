@@ -1,33 +1,33 @@
 const fs = require('fs')
 
 /**
- * @param {string} filePath 
- * @param {?string} namespace 
- * @param {string} classType 
- * @param {string} className 
+ * @param {string} filePath
+ * @param {?string} namespace
+ * @param {string} classType
+ * @param {string} className
  */
 module.exports = (filePath, namespace, classType, className) => {
-    fs.writeFileSync(filePath, `<?php` +
+  fs.writeFileSync(filePath, '<?php' +
     (
-        namespace === null ?
-            `` :
-            (
+      namespace === null
+        ? ''
+        : (
                 `
 
-namespace `
-                + namespace
-                + `;`
-            )
+namespace ` +
+                namespace +
+                ';'
+          )
     ) + `
 
-`
-        + classType
-        + ` `
-        + className
-        + `
+` +
+        classType +
+        ' ' +
+        className +
+        `
 {
 
 }
 `
-    )
+  )
 }
