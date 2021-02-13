@@ -1,7 +1,7 @@
 const vscode = require('vscode')
 
 /**
- * @param {string} namespace
+ * @param {?string} namespace
  * 
  * @return {Promise<string>}
  */
