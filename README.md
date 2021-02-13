@@ -5,3 +5,5 @@ Install :
 ```
 git clone https://github.com/pierreminiggio/vscode-php-helpers
 ```
+
+(Only tested on Windows 10)
