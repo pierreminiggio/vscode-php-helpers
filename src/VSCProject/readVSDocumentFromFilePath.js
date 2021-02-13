@@ -3,7 +3,7 @@ const vscode = require('vscode')
 /**
  * @param {string} filePath
  *
- * @return {import('vscode').TextDocument}
+ * @return {Promise<import('vscode').TextDocument>}
  */
 module.exports = filePath => {
   return new Promise((resolve, reject) => {
