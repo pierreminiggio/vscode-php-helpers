@@ -25,30 +25,30 @@ function activate(context) {
 
         let namespace = null
 
-		// Find namespace from composer.json
-		if (composerJsonPath !== null) {
+        // Find namespace from composer.json
+        if (composerJsonPath !== null) {
 
-			let text = null
-			try {
-				text = await readStringFromFilePath(composerJsonPath)
-			} catch (err) {
-				vscode.window.showErrorMessage('Could not open composer.json : ' + err)
-			}
+            let text = null
+            try {
+                text = await readStringFromFilePath(composerJsonPath)
+            } catch (err) {
+                vscode.window.showErrorMessage('Could not open composer.json : ' + err)
+            }
 
-			if (text !== null) {
-				const json = JSON.parse(text)
-				if (json === null) {
-					vscode.window.showErrorMessage('Syntax error in your ' + composerJsonPath)
-				} else {
-					namespace = findNamespaceFromComposerJson(json, clickedFolder)
-				}
-			}
-		}
+            if (text !== null) {
+                const json = JSON.parse(text)
+                if (json === null) {
+                    vscode.window.showErrorMessage('Syntax error in your ' + composerJsonPath)
+                } else {
+                    namespace = findNamespaceFromComposerJson(json, clickedFolder)
+                }
+            }
+        }
 
-		// Fallback to nearby classes name
-		if (namespace === null) {
-			namespace = await findNamespaceFromNearbyClasses(rootFolder, clickedFolder)
-		}
+        // Fallback to nearby classes name
+        if (namespace === null) {
+            namespace = await findNamespaceFromNearbyClasses(rootFolder, clickedFolder)
+        }
         
         const classTypeDisplayName = await pickClassType()
 
@@ -56,19 +56,24 @@ function activate(context) {
             return
         }
 
-		const className = await pickClassName(classTypeDisplayName)
+        const className = await pickClassName(classTypeDisplayName)
 
-		if (className === undefined) {
-			return
-		}
+        if (className === undefined) {
+            return
+        }
 
-		namespace = await pickNamespace(namespace)
+        namespace = await pickNamespace(namespace)
+
+        if (namespace === undefined) {
+            return
+        }
+
         const classType = classTypeDisplayName.toLowerCase()
 
-		const classFilePath = getNewClassFilePath(rootFolder, clickedFolder, className)
-		createClassFile(classFilePath, namespace ? namespace : null, classType, className)
+        const classFilePath = getNewClassFilePath(rootFolder, clickedFolder, className)
+        createClassFile(classFilePath, namespace ? namespace : null, classType, className)
 
-		vscode.window.showTextDocument(await readVSDocumentFromFilePath(classFilePath))
+        vscode.window.showTextDocument(await readVSDocumentFromFilePath(classFilePath))
     })
 
     context.subscriptions.push(disposable);
