@@ -31,7 +31,7 @@
     }
   },
   "scripts": {
-    "lint": "eslint .",
+    "lint": "node node_modules/eslint/bin/eslint.js --fix --config ./.eslintrc.json ./test",
     "pretest": "npm run lint",
     "test": "node ./test/runTest.js"
   },
