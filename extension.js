@@ -2,7 +2,8 @@ const createClassFile = require('./src/VSCProject/createClassFile.js')
 const findComposerJsonFilePath = require('./src/VSCProject/findComposerJsonFilePath.js')
 const getNewClassFilePath = require('./src/VSCProject/getNewClassFilePath.js')
 const findLastFolder = require('./src/VSCProject/findLastFolder.js')
-const findNamespace = require('./src/VSCProject/findNamespace.js')
+const findNamespaceFromComposerJson = require('./src/VSCProject/findNamespaceFromComposerJson.js')
+const findNamespaceFromNearbyClasses = require('./src/VSCProject/findNamespaceFromNearbyClasses.js')
 const pickClassName = require('./src/UserInput/pickClassName.js')
 const pickNamespace = require('./src/UserInput/pickNamespace.js')
 const pickClassType = require('./src/UserInput/pickClassType.js')
@@ -24,8 +25,9 @@ function activate(context) {
 
         let namespace = null
 
+		// Find namespace from composer.json
 		if (composerJsonPath !== null) {
-			
+
 			let text = null
 			try {
 				text = await readStringFromFilePath(composerJsonPath)
@@ -38,9 +40,14 @@ function activate(context) {
 				if (json === null) {
 					vscode.window.showErrorMessage('Syntax error in your ' + composerJsonPath)
 				} else {
-					namespace = findNamespace(json, clickedFolder)
+					namespace = findNamespaceFromComposerJson(json, clickedFolder)
 				}
 			}
+		}
+
+		// Fallback to nearby classes name
+		if (namespace === null) {
+			namespace = await findNamespaceFromNearbyClasses(rootFolder, clickedFolder)
 		}
         
         const classTypeDisplayName = await pickClassType()
