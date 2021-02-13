@@ -32,6 +32,7 @@ module.exports = (rootFolder, clickedFolder) => {
             const phpFiles = fs.readdirSync(folderToCheck, {encoding: 'utf8'}).filter(file => file.substr(-4) === '.php')
 
             for (const phpFileIndex in phpFiles) {
+                console.log(folderToCheck + pathSeparator + phpFiles[phpFileIndex])
                 const fileContent = await readStringFromFilePath(folderToCheck + pathSeparator + phpFiles[phpFileIndex])
                 const splitOnNameSpace = fileContent.split('namespace')
 

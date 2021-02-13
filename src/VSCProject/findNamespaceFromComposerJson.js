@@ -24,7 +24,13 @@ module.exports = (composerJson, clickedPath) => {
         for (const namespace in psr4) {
             const namespaceFolder = '/' + psr4[namespace]
             if (clickedPath.indexOf(namespaceFolder) === 0) {
-                return namespace + clickedPath.substr(namespaceFolder.length).slice(0, -1).split('/').join('\\')
+                const relativeFolder = clickedPath.substr(namespaceFolder.length).slice(0, -1)
+
+                if (relativeFolder === '') {
+                    return namespace.slice(0, -1)
+                }
+
+                return namespace + relativeFolder.split('/').join('\\')
             }
         }
     }
